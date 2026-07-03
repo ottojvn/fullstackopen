@@ -8,8 +8,13 @@ const App = () => {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    setPersons(persons.concat({ name: newName, id: persons.length + 1 }))
-    setNewName('')
+    if (persons.some(user => user.name === newName)) {
+      alert(`${newName} is already added to the phonebook`)
+      setNewName('')
+    } else {
+      setPersons(persons.concat({ name: newName, id: persons.length + 1 }))
+      setNewName('')
+    }
   }
 
   return (

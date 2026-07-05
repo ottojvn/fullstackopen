@@ -1,4 +1,4 @@
-import axios from 'axios'
+import personsService from './services/persons'
 
 import { useState, useEffect } from 'react'
 import { Numbers } from './components/Numbers'
@@ -12,9 +12,9 @@ const App = () => {
   const [filterName, setFilterName] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data))
+    personsService
+      .getAll()
+      .then(persons => setPersons(persons))
   }, [])
 
   const handleSubmit = (e) => {
@@ -30,10 +30,10 @@ const App = () => {
       alert(`Number ${newNumber} is already added to the phonebook`)
       setNewNumber('')
     } else {
-      axios
-        .post('http://localhost:3001/persons', { name: newName, number: newNumber })
-        .then(response => {
-          setPersons(persons.concat(response.data))
+      personsService
+        .create({ name: newName, number: newNumber })
+        .then(newPerson => {
+          setPersons(persons.concat(newPerson))
           setNewName('')
           setNewNumber('')
         })

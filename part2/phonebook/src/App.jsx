@@ -40,6 +40,17 @@ const App = () => {
     }
   }
 
+  const handleDelete = (e, id, name) => {
+    e.preventDefault()
+    if (window.confirm(`Delete ${name}?`)) {
+      personsService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -54,7 +65,8 @@ const App = () => {
         onSubmit={handleSubmit} />
       <Numbers
         persons={persons}
-        filterName={filterName} />
+        filterName={filterName}
+        onDelete={handleDelete} />
     </div>
   )
 }

@@ -1,3 +1,6 @@
 export const Filter = ({ value, onChange }) => {
-  return <input value={value} onChange={onChange} />;
+  return <div>
+    <label htmlFor='filterInput'>Filter: </label>
+    <input id='filterInput' value={value} onChange={onChange} />
+  </div>
 };

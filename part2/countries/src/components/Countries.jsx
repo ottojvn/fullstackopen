@@ -11,7 +11,7 @@ const CountryDetails = ({ country }) => {
         setWeather(weather)
         console.log(weather)
       })
-  }, [])
+  })
 
   return (
     <div>

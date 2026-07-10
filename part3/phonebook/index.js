@@ -26,14 +26,26 @@ const entries = [
     }
 ]
 
-const info = `<p>Phonebook has info for ${entries.length} people</p>\r\n<p>${new Date()}</p>`
+const general_info = `<p>Phonebook has info for ${entries.length} people</p>\r\n<p>${new Date()}</p>`
 
 app.get('/api/persons', (_request, response) => {
     response.json(entries)
 })
 
 app.get('/info', (_request, response) => {
-    response.send(info)
+    response.send(general_info)
+})
+
+app.get('/api/persons/:id', (request, response) => {
+    const person = response.json(entries.filter(entry => entry.id === request.params.id)).at(0)
+
+    if (!person) {
+        request.statusMessage = 'Person ID not found'
+        return request.status(204).end()
+    }
+
+    response.json(person)
+
 })
 
 app.listen(3000)

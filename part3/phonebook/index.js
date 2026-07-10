@@ -26,9 +26,14 @@ const entries = [
     }
 ]
 
+const info = `<p>Phonebook has info for ${entries.length} people</p>\r\n<p>${new Date()}</p>`
 
 app.get('/api/persons', (_request, response) => {
     response.json(entries)
+})
+
+app.get('/info', (_request, response) => {
+    response.send(info)
 })
 
 app.listen(3000)

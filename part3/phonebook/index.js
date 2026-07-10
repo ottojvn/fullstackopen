@@ -3,7 +3,7 @@ import express from 'express'
 const app = express()
 app.use(express.json())
 
-const entries = [
+let entries = [
     {
         "id": "1",
         "name": "Arto Hellas",
@@ -26,6 +26,10 @@ const entries = [
     }
 ]
 
+const genId = () => {
+    return Math.round(7000000000000 * Math.random())
+}
+
 const general_info = `<p>Phonebook has info for ${entries.length} people</p>\r\n<p>${new Date()}</p>`
 
 app.get('/api/persons', (_request, response) => {
@@ -37,23 +41,40 @@ app.get('/info', (_request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const person = response.json(entries.filter(entry => entry.id === request.params.id)).at(0)
+    const person = entries.filter(entry => entry.id === request.params.id).at(0)
 
     if (!person) {
-        request.statusMessage = 'Person ID not found'
-        return request.status(204).end()
+        response.statusMessage = 'Person ID not found'
+        response.status(204)
+        return response.json(person)
     }
 
-    response.json(person)
-
+    return response.json(person)
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-    entries = entries.filter(entry => {
-        entry.id !== request.params.id
-    })
+    entries = entries.filter(entry => entry.id !== request.params.id)
 
-    response.status(204).end()
+    response.status(200).end()
+})
+
+app.post('/api/persons', (request, response) => {
+    const { name, number } = request.body.name
+    if (!name || !name.trim()) {
+        return response.status(422).json({ error: "name is required" })
+    }
+
+    if (!number || !number.trim()) {
+        return response.status(422).json({ error: "number is required" })
+    }
+
+    if (entries.some(entry => entry.name === name)) {
+        return response.status(409).json({ error: "name must be unique" })
+    }
+
+    const person = { id: genId(), name: request.body.name, number: request.body.number }
+    entries = entries.concat(person)
+    response.status(201).send(person)
 })
 
 app.listen(3000)

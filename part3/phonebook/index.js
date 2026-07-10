@@ -48,4 +48,12 @@ app.get('/api/persons/:id', (request, response) => {
 
 })
 
+app.delete('/api/persons/:id', (request, response) => {
+    entries = entries.filter(entry => {
+        entry.id !== request.params.id
+    })
+
+    response.status(204).end()
+})
+
 app.listen(3000)

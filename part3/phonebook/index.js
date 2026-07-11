@@ -1,7 +1,22 @@
 import express from 'express'
+import morgan from 'morgan'
+
 
 const app = express()
 app.use(express.json())
+
+morgan.token('body', (req, _) => JSON.stringify(req.body))
+
+app.use(morgan(function (tokens, req, res) {
+    return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, 'content-length'), '-',
+        tokens['response-time'](req, res), 'ms',
+        tokens.body(req, res)
+    ].join(' ')
+}))
 
 let entries = [
     {
@@ -27,16 +42,16 @@ let entries = [
 ]
 
 const genId = () => {
-    return Math.round(7000000000000 * Math.random())
+    return String(Math.round(7000000000000 * Math.random()))
 }
 
-const general_info = `<p>Phonebook has info for ${entries.length} people</p>\r\n<p>${new Date()}</p>`
 
 app.get('/api/persons', (_request, response) => {
     response.json(entries)
 })
 
 app.get('/info', (_request, response) => {
+    const general_info = `<p>Phonebook has info for ${entries.length} people</p>\r\n<p>${new Date()}</p>`
     response.send(general_info)
 })
 
@@ -45,7 +60,7 @@ app.get('/api/persons/:id', (request, response) => {
 
     if (!person) {
         response.statusMessage = 'Person ID not found'
-        response.status(204)
+        response.status(404)
         return response.json(person)
     }
 
@@ -55,11 +70,11 @@ app.get('/api/persons/:id', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
     entries = entries.filter(entry => entry.id !== request.params.id)
 
-    response.status(200).end()
+    response.status(204).end()
 })
 
 app.post('/api/persons', (request, response) => {
-    const { name, number } = request.body.name
+    const { name, number } = request.body
     if (!name || !name.trim()) {
         return response.status(422).json({ error: "name is required" })
     }
@@ -77,4 +92,4 @@ app.post('/api/persons', (request, response) => {
     response.status(201).send(person)
 })
 
-app.listen(3000)
+app.listen(3001)

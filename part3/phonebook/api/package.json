@@ -5,9 +5,11 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch index.js",
-    "start": "node index.js"
+    "build:ui": "rm -rf dist && cd ../frontend && npm install && npm run build && cp -r dist ../api",
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push"
   },
   "dependencies": {
     "cors": "^2.8.6",

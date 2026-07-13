@@ -1,9 +1,11 @@
 import express from 'express'
 import morgan from 'morgan'
+import cors from 'cors'
 
 
 const app = express()
 app.use(express.json())
+app.use(cors())
 
 morgan.token('body', (req, _) => JSON.stringify(req.body))
 
@@ -92,4 +94,6 @@ app.post('/api/persons', (request, response) => {
     response.status(201).send(person)
 })
 
-app.listen(3001)
+app.listen(3000, () => {
+    console.log('Server running on port 3000')
+})
